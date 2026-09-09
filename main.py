@@ -1,6 +1,7 @@
 import telebot
 from config import API_KEY, ADMIN_ID
 from telebot import types
+import storage 
 bot = telebot.TeleBot(API_KEY , parse_mode= 'HTML')
 owner_id = ADMIN_ID
 admin_bottons = ["ثبت محصول", "محصولات", "سفارشات"]
@@ -9,6 +10,7 @@ flag_add_product = False
 flag_panel_products_admin = False
 flag_orders = False
 add_product_state = "idle"
+product = {}
 reply_keyboard_admin = types.ReplyKeyboardMarkup(resize_keyboard= True, one_time_keyboard= True)
 reply_keyboard_admin.add("ثبت محصول", "محصولات", "سفارشات")
 
@@ -39,28 +41,50 @@ def admin_panel(message):
         #show_panel_products(message)
 
 
+@bot.message_handler(func = lambda message : message.text in user_bottons)
+def user_panel(message):
+    if message.text == "پروفایل":
+        flag_profile = True
+        #show_profile(message)
+    elif message.text == "محصولات":
+        flag_panel_products_user = True
+        #show_panel_products(message) it's the same with the name of this button in admin panel 
+    elif message.text == "سبد خرید":
+        flag_shopping_basket = True
+        #show_shopping_basket(message)
 
-@bot.message_handler(func= lambda message : message.from_user.id == owner_id and flag_add_product)
+
+
+@bot.message_handler(func= lambda message : message.from_user.id == owner_id and flag_add_product, content_types=['text', 'photo'])
 def add_product(message):
     global add_product_state
+    global product
     if message.text == "ثبت محصول" and add_product_state == "idle" :
         bot.send_message(message.chat.id, 'نام محصول خود را وارد کنید.')
         add_product_state = "waiting_for_name"
 
     elif add_product_state == "waiting_for_name" :
-        product_name = message.text
+        product["name"] = message.text
         bot.send_message(message.chat.id, 'توضیحات محصول را وارد کنید.')
         add_product_state = "waiting_for_description"
 
     elif add_product_state == "waiting_for_description" :
-        product_description = message.text
+        product["description"] = message.text
         bot.send_message(message.chat.id, 'قیمت محصول را وارد کنید. ')
         add_product_state = "waiting_for_price"
 
     elif add_product_state == "waiting_for_price" :
-        product_price = message.text
-        bot.send_message(message.chat.id, 'فرآیند ثبت محصول انجام شد.')
+        product["price"] = message.text
+        bot.send_message(message.chat.id, 'عکس محصول را ارسال کنید.')
+        add_product_state = "waiting_for_image"
+
+    elif add_product_state == "waiting_for_image" :
+        product["image"] = message.photo[-1].file_id
+        bot.send_message(message.chat.id, 'فرآیند ثبت محصول پایان یافت.')
         add_product_state = "idle"
+        storage.save_products(product)
+        print(product)
+        
         
         
 
