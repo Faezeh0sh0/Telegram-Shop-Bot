@@ -4,7 +4,7 @@ from telebot import types
 import storage 
 bot = telebot.TeleBot(API_KEY , parse_mode= 'HTML')
 owner_id = ADMIN_ID
-admin_bottons = ["ثبت محصول", "محصولات", "سفارشات"]
+admin_bottons = ["ثبت محصول", "انبار", "سفارشات"]
 user_bottons = ["پروفایل", "محصولات", "سبد خرید"]
 flag_add_product = False
 flag_panel_products_admin = False
@@ -13,7 +13,7 @@ flag_panel_products_user = False
 add_product_state = "idle"
 product = {}
 reply_keyboard_admin = types.ReplyKeyboardMarkup(resize_keyboard= True, one_time_keyboard= True)
-reply_keyboard_admin.add("ثبت محصول", "محصولات", "سفارشات")
+reply_keyboard_admin.add("ثبت محصول", "انبار", "سفارشات")
 
 reply_keyboard_user = types.ReplyKeyboardMarkup(resize_keyboard= True, one_time_keyboard= True)
 reply_keyboard_user.add("پروفایل", "محصولات", "سبد خرید")
@@ -39,7 +39,7 @@ def admin_panel(message):
     elif message.text == "سفارشات":
         flag_orders = True
         #show_orders(message)
-    elif message.text == "محصولات":
+    elif message.text == "انبار":
         flag_panel_products_admin = True
         #show_panel_products(message)
 
@@ -52,6 +52,7 @@ def user_panel(message):
         #show_profile(message)
     elif message.text == "محصولات":
         flag_panel_products_user = True
+        print(flag_panel_products_user)
         show_user_panel_products(message) 
     elif message.text == "سبد خرید":
         flag_shopping_basket = True
@@ -94,7 +95,7 @@ def add_product(message):
         print(product)
         
         
-@bot.message_handler(func = lambda  : flag_panel_products_user)
+@bot.message_handler(func = lambda message : flag_panel_products_user)
 def show_user_panel_products(message):
     product = storage.load_products()
     print(product)
