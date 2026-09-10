@@ -1,6 +1,10 @@
 {
+"products" : [
+{
   "name": "Yalda Earings",
   "description": "These earings are designed for Yalda Ceremonies. These represent this specific night in Iranian culture.",
   "price": "5",
   "image": "AgACAgQAAxkBAAIBHWqhPjUi6Ei65RDU4krjlAQEm0OUAAI5D2sb-PoQUZcZkmoDBGcFAQADAgADeQADPQQ"
+}
+]
 }
