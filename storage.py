@@ -23,3 +23,16 @@ def edit_product(selected_product, edit_field):
         file.seek(0)
         json.dump(data, file, indent = 4)
         file.truncate()
+
+def delete_product(field_id):
+    with open("products.json", mode = "r+", encoding= "utf-8") as file:
+        data = json.load(file)
+        count = -1
+        for product in data["products"]:
+            count +=1
+            if product["id"] == field_id:
+                data["products"].pop(count)
+                break
+        file.seek(0)
+        json.dump(data, file, indent = 4)
+        file.truncate()
